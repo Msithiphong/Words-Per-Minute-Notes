@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Page with Restart</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #333333;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .typing-container {
+            max-width: 800px;
+            background: #222;
+            border: 2px solid white;
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+            overflow-y: auto;
+            height: 400px;
+            white-space: pre-wrap; /* Preserve spaces and line breaks */
+            word-wrap: break-word;
+        }
+
+        .word {
+            display: inline-block;
+            white-space: nowrap;;
+        }
+
+        .letter {
+            display: inline-block;
+            color: #aaa; /* Default color */
+        }
+
+        .letter.correct {
+            color: green;
+        }
+
+        .letter.incorrect {
+            color: red;
+        }
+
+        .input-area {
+            margin-top: 20px;
+            background: #444;
+            border: 2px solid #aaa;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            width: 100%;
+            max-width: 800px;
+            height: 50px;
+            outline: none;
+            border-radius: 8px;
+        }
+
+        .input-area:focus {
+            border-color: #007BFF;
+        }
+
+        .wpm-display {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #d5d823;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="typing-container" id="textContainer"></div>
+        <textarea class="input-area" id="typingInput" placeholder="Start typing here..."></textarea>
+        <div class="wpm-display" id="wpmDisplay">WPM: 0</div>
+        <button class="button" onclick="restartPage()">Restart</button>
+        <button class="button" onclick="goToUploadPage()">Back to Upload</button>
+    </div>
+    </div>
+
+    <script>
+        // Retrieve file content from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileContent = decodeURIComponent(urlParams.get('content') || '');
+
+        const textContainer = document.getElementById('textContainer');
+        const typingInput = document.getElementById('typingInput');
+        const wpmDisplay = document.getElementById('wpmDisplay');
+
+        // Render the file content into the text container
+        fileContent.split('').forEach((char) => {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = char; // Add the character
+            textContainer.appendChild(span);
+        });
+        
+        const letters = document.querySelectorAll('.letter');
+        let currentIndex = 0; // Tracks user position in the text
+        let startTime = null; // Track when typing starts
+
+        
+
+        typingInput.addEventListener('input', () => {
+            if (!startTime) startTime = Date.now(); // Start the timer when typing begins
+
+            const input = typingInput.value;
+
+            // Reset all letters to default if input is shorter
+            for (let i = input.length; i < letters.length; i++) {
+                letters[i].classList.remove('correct', 'incorrect');
+            }
+
+            // Process each character in the input
+            for (let i = 0; i < input.length; i++) {
+                const currentChar = input[i];
+                const letterElement = letters[i];
+
+                if (currentChar === letterElement.textContent) {
+                    letterElement.classList.add('correct');
+                    letterElement.classList.remove('incorrect');
+                } else {
+                    letterElement.classList.add('incorrect');
+                    letterElement.classList.remove('correct');
+                }
+            }
+
+            // Update the WPM display
+            if (startTime) {
+                const wpm = calculateWPM();
+                wpmDisplay.textContent = `WPM: ${wpm}`;
+            }
+
+            // Prevent typing beyond the text
+            currentIndex = input.length;
+            if (input.length > letters.length) {
+                typingInput.value = input.slice(0, letters.length);
+            }
+
+            if (input.length === wordsAndSpaces.length) {
+                const elapsedTime = (Date.now() - startTime) / 1000; // Time in seconds
+                const totalWords = textContainer.innerText.trim().split(/\s+/).length;
+                const accuracy = calculateAccuracy(input);
+        
+                // Redirect to the stats screen
+                window.location.href = `/stats?elapsedTime=${elapsedTime}&totalWords=${totalWords}&wpm=${calculateWPM()}&accuracy=${accuracy}`;
+            }
+        });
+
+        typingInput.addEventListener('keydown', (event) => {
+            // Handle backspace key
+            if (event.key === 'Backspace' && currentIndex > 0) {
+                currentIndex--; // Move back one character
+                letters[currentIndex].classList.remove('correct', 'incorrect'); // Reset the letter style
+            }
+        });
+
+        textContainer.addEventListener('input', () => {
+            if (!startTime) startTime = Date.now(); // Start the timer when typing begins
+        
+            const input = textContainer.innerText.replace(/\n/g, ''); // Get user input without line breaks
+        
+            // Reset all letters to default if input is shorter
+            for (let i = input.length; i < wordsAndSpaces.length; i++) {
+                wordsAndSpaces[i].classList.remove('correct', 'incorrect');
+            }
+        
+            // Process each character in the input
+            for (let i = 0; i < input.length; i++) {
+                const currentChar = input[i];
+                const element = wordsAndSpaces[i];
+        
+                if (currentChar === element.textContent) {
+                    element.classList.add('correct');
+                    element.classList.remove('incorrect');
+                } else {
+                    element.classList.add('incorrect');
+                    element.classList.remove('correct');
+                }
+            }
+        
+            // Update WPM display
+            if (startTime) {
+                const wpm = calculateWPM();
+                wpmDisplay.textContent = `WPM: ${wpm}`;
+            }
+        
+            // Check if user has completed typing
+            if (input === fileContent) {
+                const elapsedTime = (Date.now() - startTime) / 1000; // Time in seconds
+                const totalWords = fileContent.trim().split(/\s+/).length;
+                const accuracy = calculateAccuracy(input);
+        
+                // Redirect to the stats screen
+                window.location.href = `/stats.html?elapsedTime=${elapsedTime}&totalWords=${totalWords}&wpm=${calculateWPM()}&accuracy=${accuracy}`;
+            }
+        });
+        
+        function calculateAccuracy(input) {
+            let correctCount = 0;
+            for (let i = 0; i < input.length; i++) {
+                if (i < wordsAndSpaces.length && input[i] === wordsAndSpaces[i].textContent) {
+                    correctCount++;
+                }
+            }
+            return Math.round((correctCount / wordsAndSpaces.length) * 100);
+        }
+
+        // Calculate WPM
+        function calculateWPM() {
+            const elapsedTime = (Date.now() - startTime) / 1000 / 60; // Convert to minutes
+            const wordsTyped = typingInput.value.trim().split(/\s+/).filter(word => word).length;
+            return Math.round(wordsTyped / elapsedTime); // WPM formula
+        }
+
+        function restartPage() {
+            typingInput.value = ""; // Clear the typing input box
+            currentIndex = 0; // Reset typing index
+            location.reload(); // Reload the page
+        }
+
+        function goToUploadPage() {
+            window.location.href = "/"; // Redirects to the upload page
+        }
+    </script>
+</body>
+</html>

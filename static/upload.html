@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #333333; /* Updated to dark gray */
+        color: white; /* Optional: Adjust text color for better contrast */
+      }
+
+      .container {
+        text-align: center;
+        background: white;
+        padding: 20px 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex; /* Flexbox layout */
+        flex-direction: column; /* Stack children vertically */
+        align-items: center; /* Center horizontally */
+        justify-content: center; /* Center vertically */
+        min-height: 400px; /* Ensure enough height for centering */
+        width: 400px; /* Fixed width for better alignment */
+        margin: auto; /* Center the container on the page */
+        box-sizing: border-box;
+      }
+
+      h1 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      p {
+        margin-bottom: 20px;
+        color: #555;
+      }
+
+      .upload-box {
+        border: 2px dashed #aaa;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #333333;
+        cursor: pointer;
+        transition: border-color 0.2s;
+        width: 300px; /* Fixed width */
+        height: 150px; /* Fixed height */
+        display: flex; /* Flexbox to center text inside */
+        flex-direction: column; /* Stack text vertically */
+        justify-content: center; /* Center text vertically */
+        align-items: center; /* Center text horizontally */
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+      .upload-box.selected {
+        border-color: #007BFF;
+        background-color: #e0f7ff;
+        cursor: default; /* Disable pointer */
+      }
+
+      .upload-box.selected strong {
+        color: #333;
+      }
+
+      .upload-box:hover {
+        border-color: #333;
+      }
+
+      .upload-box.dragover {
+        border-color: #007BFF;
+        background-color: #e0f7ff;
+        }
+
+      #fileInput {
+        display: none;
+      }
+
+      .button {
+        margin-top: 20px;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .button:hover {
+        background-color: #0056b3;
+      }
+
+      .info {
+        font-size: 14px;
+        margin-top: 10px;
+        color: #777;
+      }
+
+      #fileInput {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Note Type</h1>
+      <p>Upload a text or PDF file to get started!</p>
+      <label for="fileInput" class="upload-box" id="uploadBox">
+        <strong>Drag and drop your file here</strong><br />
+        <span>or click to select</span>
+      </label>
+      <input type="file" id="fileInput" accept=".txt, .pdf" />
+      <button class="button" onclick="processFile()">Upload File</button>
+      <p class="info">Accepted formats: .txt, .pdf</p>
+    </div>
+
+    <script>
+        const uploadBox = document.getElementById('uploadBox');
+        const fileInput = document.getElementById('fileInput');
+        let selectedFile = null;
+
+        // Add event listeners for drag-and-drop functionality
+        uploadBox.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', (event) => {
+            event.preventDefault();
+            uploadBox.classList.remove('dragover');
+
+            if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+                selectedFile = event.dataTransfer.files[0];
+                fileInput.files = event.dataTransfer.files; // Sync with file input
+                displayFileName(selectedFile.name);
+            }
+        });
+
+        
+
+        // Handle click on upload box to open file picker
+        uploadBox.addEventListener('click', () => {
+          if (!uploadBox.classList.contains('selected')) {
+            fileInput.click();
+          }
+        });
+
+        // Handle file input change
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) {
+                selectedFile = fileInput.files[0];
+                displayFileName(selectedFile.name);
+            }
+        });
+
+        function displayFileName(fileName) {
+          uploadBox.innerHTML = `<strong>${fileName}</strong>`;
+          uploadBox.classList.add('selected');
+        }
+
+
+        // Process the file and redirect to typing page
+        function processFile() {
+            if (!selectedFile) {
+                alert('No file selected. Please choose a file.');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            // When the file is loaded
+            reader.onload = function (event) {
+                const fileContent = encodeURIComponent(event.target.result); // Encode content for the URL
+                window.location.href = `/typing?content=${fileContent}`; // Redirect to the typing page
+            };
+
+            // Read the file as plain text
+            reader.readAsText(selectedFile);
+        }
+    </script>
+  </body>
+</html>

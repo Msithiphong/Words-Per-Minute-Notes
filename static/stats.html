@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Stats</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333333;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .stats-container {
+            text-align: center;
+            background: #444;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-container h1 {
+            margin-bottom: 20px;
+            color: #d5d823;
+        }
+
+        .stat {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="stats-container">
+        <h1>Typing Stats</h1>
+        <div class="stat" id="timeElapsed"></div>
+        <div class="stat" id="wpmStat"></div>
+        <div class="stat" id="accuracyStat"></div>
+        <button class="button" onclick="goBack()">Try Again</button>
+    </div>
+
+    <script>
+        // Retrieve stats from query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const elapsedTime = urlParams.get('elapsedTime');
+        const totalWords = urlParams.get('totalWords');
+        const wpm = urlParams.get('wpm');
+        const accuracy = urlParams.get('accuracy');
+
+        // Display stats
+        document.getElementById('timeElapsed').textContent = `Time Elapsed: ${Math.round(elapsedTime)} seconds`;
+        document.getElementById('wpmStat').textContent = `Words Per Minute: ${wpm}`;
+        document.getElementById('accuracyStat').textContent = `Accuracy: ${accuracy}%`;
+
+        // Function to return to the typing page
+        function goBack() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>
