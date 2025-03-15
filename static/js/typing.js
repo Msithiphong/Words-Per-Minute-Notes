@@ -103,30 +103,22 @@ function initializeTimer() {
         timeRemaining = timeLimit;
         updateTimerDisplay(timeRemaining);
         
-        // Start the timer when typing begins
-        typingInput.addEventListener('input', function startTimer() {
-            if (!startTime) {
-                startTime = Date.now();
-                timerInterval = setInterval(() => {
-                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                    timeRemaining = timeLimit - elapsed;
-                    
-                    updateTimerDisplay(timeRemaining);
-                    
-                    if (timeRemaining <= 0) {
-                        clearInterval(timerInterval);
-                        finishTest();
-                    }
-                }, 1000);
-                
-                // Remove the event listener after starting the timer
-                typingInput.removeEventListener('input', startTimer);
+        // Start the timer immediately
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            updateTimerDisplay(timeRemaining);
+            
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                finishTest();
             }
-        }, { once: true });
+        }, 1000);
     }
 }
 
 function updateTimerDisplay(seconds) {
+    if (seconds < 0) seconds = 0;
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;

@@ -97,7 +97,7 @@ fileInput.addEventListener('change', () => {
   }
 });
 
-// Process the file and redirect to typing page
+// Process the file and save it
 function processFile() {
   if (!selectedFile) {
     alert('No file selected. Please choose a file.');
@@ -118,13 +118,7 @@ function processFile() {
     return response.json();
   })
   .then(data => {
-    if (data.content) {
-      const fileContent = encodeURIComponent(data.content);
-      window.location.href = `/typing?content=${fileContent}`;
-    } else {
-      alert('File uploaded successfully!');
-      location.reload(); // Refresh to show the new file in the list
-    }
+    location.reload(); // Refresh to show the new file in the list
   })
   .catch(error => {
     console.error('Error:', error);
