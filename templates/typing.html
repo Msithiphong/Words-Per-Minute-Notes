@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/typing.css">
+</head>
+<body>
+    <div class="typing-wrapper">
+        <div class="timer-container">
+            <div id="timer" class="timer">00:00</div>
+        </div>
+        <div class="typing-container" id="textContainer"></div>
+        <textarea class="input-area" id="typingInput" placeholder="Start typing here..."></textarea>
+        <div class="button-container">
+            <button class="button" onclick="restartPage()">Restart</button>
+            <button class="button" onclick="goToUploadPage()">Back to Upload</button>
+        </div>
+    </div>
+    <script src="/static/js/typing.js"></script>
+</body>
+</html>

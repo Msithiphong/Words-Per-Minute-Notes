@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/upload.css">
+  </head>
+  <body>
+    <div class="file-panel">
+      <h2>Saved Files</h2>
+      <ul class="file-list" id="fileList">
+        {% for file in files %}
+        <li class="file-item">
+          <span class="file-name" onclick="loadFile('{{ file.name }}')">{{ file.name }}</span>
+          <button class="delete-button" onclick="deleteFile('{{ file.name }}')">×</button>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div class="container">
+        <h1>Note Type</h1>
+        <div class="upload-box" id="dragDropBox">
+          <span class="drag-drop-text">Drag and drop a file here or click to select</span>
+          <input type="file" id="fileInput" accept=".txt,.pdf" style="display: none;">
+        </div>
+        
+        <button class="button" onclick="processFile()">Upload</button>
+
+        <div class="time-limit-container">
+          <div class="time-input-group">
+            <input type="number" id="minutes" min="0" max="60" value="0" class="time-input">
+            <label for="minutes">minutes</label>
+          </div>
+          <div class="time-input-group">
+            <input type="number" id="seconds" min="0" max="59" value="0" class="time-input">
+            <label for="seconds">seconds</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/js/upload.js"></script>
+  </body>
+</html> 
