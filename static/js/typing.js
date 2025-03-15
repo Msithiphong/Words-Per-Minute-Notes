@@ -23,6 +23,25 @@ let timerInterval = null;
 let timeRemaining = 0;
 let timerDisplay = document.getElementById('timer');
 
+// At the start of the file, after variable declarations
+document.addEventListener('DOMContentLoaded', () => {
+    // Focus the input when the page loads
+    typingInput.focus();
+
+    // Refocus the input if the user clicks anywhere on the page
+    document.addEventListener('click', () => {
+        typingInput.focus();
+    });
+
+    // Prevent losing focus when pressing Tab
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            typingInput.focus();
+        }
+    });
+});
+
 typingInput.addEventListener('input', () => {
     if (!startTime) startTime = Date.now(); // Start the timer when typing begins
 
@@ -85,6 +104,7 @@ function calculateWPM() {
     return Math.round(wordsTyped / elapsedTime); // WPM formula
 }
 
+// Update the button click handlers to maintain focus
 function restartPage() {
     typingInput.value = ""; // Clear the typing input box
     currentIndex = 0; // Reset typing index

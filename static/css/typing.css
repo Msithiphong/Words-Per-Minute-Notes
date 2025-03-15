@@ -75,9 +75,9 @@ body {
 .input-area {
     width: 100%;
     max-width: 800px;
-    background: var(--container-bg);
-    border: 2px solid var(--sub-color);
-    color: var(--font-color);
+    background: transparent;
+    border: none;
+    color: transparent;
     font-family: 'Roboto Mono', monospace;
     font-size: 16px;
     padding: 15px;
@@ -85,12 +85,16 @@ body {
     outline: none;
     border-radius: 8px;
     resize: none;
-    transition: border-color 0.3s;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
     box-sizing: border-box;
+    caret-color: transparent;
 }
 
 .input-area:focus {
-    border-color: var(--theme-color);
+    border: none;
+    outline: none;
 }
 
 .stats-container {
